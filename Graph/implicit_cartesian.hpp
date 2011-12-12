@@ -9,9 +9,9 @@
 
 template <unsigned D>
 struct vertex {
-	size_t pos[D];
-	size_t& operator[](size_t i) { return pos[i]; }
-	size_t operator[](size_t i) const { return pos[i]; }
+	int pos[D];
+	int& operator[](int i) { return pos[i]; }
+	int operator[](int i) const { return pos[i]; }
 };
 
 template <unsigned D>
@@ -23,6 +23,11 @@ bool operator==(const vertex<D> &a, const vertex<D> &b)
 	return true;
 }
 
+template <unsigned D>
+bool operator!=(const vertex<D> &a, const vertex<D> &b)
+{
+	return !(a==b);
+}
 
 template <unsigned D>
 class adjacency_iterator_t;
@@ -37,25 +42,25 @@ public:
 	typedef boost::adjacency_graph_tag			traversal_category;
 	typedef adjacency_iterator_t<D>				adjacency_iterator;
 	
-	PeriodicCartesian(size_t d1)
+	PeriodicCartesian(int d1)
 	{ 
 		BOOST_STATIC_ASSERT(D==1);
 		dim[0]= d1;
 	}
 	
-	PeriodicCartesian(size_t d1, size_t d2)
+	PeriodicCartesian(int d1, int d2)
 	{ 
 		BOOST_STATIC_ASSERT(D==2);
 		dim[0] = d1; dim[1] = d2;
 	}
 	
-	PeriodicCartesian(size_t d1, size_t d2, size_t d3) 
+	PeriodicCartesian(int d1, int d2, int d3) 
 	{
 		BOOST_STATIC_ASSERT(D==3);
 		dim[0] = d1; dim[1] = d2; dim[2] = d3;		 
 	}
 
-	size_t getDim(size_t i) const { return dim[i]; }
+	int getDim(int i) const { return dim[i]; }
 
 	friend std::pair<adjacency_iterator, adjacency_iterator > adjacent_vertices(const vertex_descriptor &v, const PeriodicCartesian<D> &g)
 	{
@@ -63,10 +68,10 @@ public:
 	}
 
 private:
-	size_t dim[D];
+	int dim[D];
 };
 
-const size_t offsets[27][3] =
+const int offsets[27][3] =
 {
 	{ 1, 1, 1}, { 0, 1, 1}, { -1, 1, 1},
 	{ 1, 0, 1}, { 0, 0, 1}, { -1, 0, 1},
@@ -86,20 +91,20 @@ class adjacency_iterator_t {
 public:
 	typedef PeriodicCartesian<D> 					graph_t;
 	typedef typename graph_t::vertex_descriptor 	vertex_descriptor;
-	//~ typedef typename Iterator::iterator_category iterator_category;
-    //~ typedef typename Iterator::value_type        value_type;
-    //~ typedef typename Iterator::difference_type   difference_type;
-    //~ typedef typename Iterator::pointer           pointer;
-    //~ typedef typename Iterator::reference         reference;
+	typedef std::forward_iterator_tag 				iterator_category;
+    typedef vertex_descriptor        				value_type;
+    typedef int   									difference_type;
+    typedef vertex_descriptor*           			pointer;
+    typedef vertex_descriptor&         				reference;
 	
 	
-	adjacency_iterator_t(graph_t *g, vertex_descriptor c, size_t p)
+	adjacency_iterator_t(const graph_t *g, vertex_descriptor c, int p)
 	: graph(g), current(c), pos(p) { }
 	
 	vertex_descriptor operator*()
 	{
 		vertex_descriptor result;
-		for(size_t i = 0;i<D;++i)
+		for(int i = 0;i<D;++i)
 			result[i] = (current[i]+offsets[pos][i]+graph->getDim(i))%graph->getDim(i);
 		return result; 
 	}
@@ -108,10 +113,15 @@ public:
 	{ ++pos; if((D==1 && pos == 1) || (D==2 && pos == 4) || (D==3 && pos == 13)) ++pos; return *this; }
 	adjacency_iterator_t operator++(int)
 	{ adjacency_iterator_t tmp = *this; ++pos; if((D==1 && pos == 1) || (D==2 && pos == 4) || (D==3 && pos == 13)) ++pos; return tmp; }
+	
+	friend bool operator==(adjacency_iterator_t<D> &a, adjacency_iterator_t<D> &b)
+	{ return a.graph == b.graph && a.current == b.current && a.pos == b.pos; }
+	friend bool operator!=(adjacency_iterator_t<D> &a, adjacency_iterator_t<D> &b)
+	{ return !(a==b); }
 private:
-	graph_t *graph;
+	const graph_t *graph;
 	vertex_descriptor current;
-	size_t pos;
+	int pos;
 };
 
 #endif
