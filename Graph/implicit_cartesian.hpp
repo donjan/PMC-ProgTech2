@@ -3,16 +3,46 @@
 
 #include <utility>
 #include <algorithm>
+#include <ostream>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/static_assert.hpp>
 
 
 template <unsigned D>
 struct vertex {
+	vertex() {}
+	vertex(int d1)
+	{ 
+		BOOST_STATIC_ASSERT(D==1);
+		pos[0]= d1;
+	}
+	
+	vertex(int d1, int d2)
+	{ 
+		BOOST_STATIC_ASSERT(D==2);
+		pos[0] = d1; pos[1] = d2;
+	}
+	
+	vertex(int d1, int d2, int d3) 
+	{
+		BOOST_STATIC_ASSERT(D==3);
+		pos[0] = d1; pos[1] = d2; pos[2] = d3;		 
+	}
 	int pos[D];
 	int& operator[](int i) { return pos[i]; }
 	int operator[](int i) const { return pos[i]; }
 };
+
+template <unsigned D>
+std::ostream& operator<<(std::ostream &out, const vertex<D> &v)
+{
+	out << '(' << v[0];
+	for(int i = 1;i<D;++i)
+		out << ',' << v[i];
+	out << ')';
+	
+	return out;
+}
 
 template <unsigned D>
 bool operator==(const vertex<D> &a, const vertex<D> &b)
