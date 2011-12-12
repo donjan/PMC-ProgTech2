@@ -4,7 +4,7 @@
 
 #define FLAG(x) std::cout << "FLAG: " << #x << std::endl;
 
-#include "../../properties.hpp"
+#include "properties.hpp"
 
 #include <boost/static_assert.hpp>
 #include <boost/parameter.hpp>
