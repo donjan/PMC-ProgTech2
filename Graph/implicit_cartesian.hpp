@@ -25,7 +25,7 @@ bool operator==(const vertex<D> &a, const vertex<D> &b)
 
 
 template <unsigned D>
-class adjacency_iterator;
+class adjacency_iterator_t;
 
 template <unsigned D>
 class PeriodicCartesian {
@@ -35,7 +35,7 @@ public:
 	typedef boost::undirected_tag				directed_category;
 	typedef boost::disallow_parallel_edge_tag	edge_parallel_category;
 	typedef boost::adjacency_graph_tag			traversal_category;
-	typedef adjacency_iterator<D>				adjacency_iterator;
+	typedef adjacency_iterator_t<D>				adjacency_iterator;
 	
 	PeriodicCartesian(size_t d1)
 	{ 
@@ -57,9 +57,9 @@ public:
 
 	size_t getDim(size_t i) const { return dim[i]; }
 
-	friend std::pair<adjacency_iterator<D>, adjacency_iterator<D> > adjacent_vertices(const vertex_descriptor &v, const PeriodicCartesian<D> &g)
+	friend std::pair<adjacency_iterator, adjacency_iterator > adjacent_vertices(const vertex_descriptor &v, const PeriodicCartesian<D> &g)
 	{
-		return std::make_pair(adjacency_iterator<D>(&g, v, 0), adjacency_iterator<D>(&g, v, 0));
+		return std::make_pair(adjacency_iterator(&g, v, 0), adjacency_iterator(&g, v, 0));
 	}
 
 private:
@@ -82,12 +82,18 @@ const size_t offsets[27][3] =
 };
 
 template <unsigned D>
-class adjacency_iterator {
+class adjacency_iterator_t {
 public:
 	typedef PeriodicCartesian<D> 					graph_t;
 	typedef typename graph_t::vertex_descriptor 	vertex_descriptor;
+	//~ typedef typename Iterator::iterator_category iterator_category;
+    //~ typedef typename Iterator::value_type        value_type;
+    //~ typedef typename Iterator::difference_type   difference_type;
+    //~ typedef typename Iterator::pointer           pointer;
+    //~ typedef typename Iterator::reference         reference;
 	
-	adjacency_iterator(graph_t *g, vertex_descriptor c, size_t p)
+	
+	adjacency_iterator_t(graph_t *g, vertex_descriptor c, size_t p)
 	: graph(g), current(c), pos(p) { }
 	
 	vertex_descriptor operator*()
@@ -98,10 +104,10 @@ public:
 		return result; 
 	}
 	
-	adjacency_iterator& operator++()
+	adjacency_iterator_t& operator++()
 	{ ++pos; if((D==1 && pos == 1) || (D==2 && pos == 4) || (D==3 && pos == 13)) ++pos; return *this; }
-	adjacency_iterator operator++(int)
-	{ adjacency_iterator tmp = *this; ++pos; if((D==1 && pos == 1) || (D==2 && pos == 4) || (D==3 && pos == 13)) ++pos; return tmp; }
+	adjacency_iterator_t operator++(int)
+	{ adjacency_iterator_t tmp = *this; ++pos; if((D==1 && pos == 1) || (D==2 && pos == 4) || (D==3 && pos == 13)) ++pos; return tmp; }
 private:
 	graph_t *graph;
 	vertex_descriptor current;
