@@ -42,6 +42,8 @@ public:
 	typedef boost::adjacency_graph_tag			traversal_category;
 	typedef adjacency_iterator_t<D>				adjacency_iterator;
 	
+	PeriodicCartesian() {}
+	
 	PeriodicCartesian(int d1)
 	{ 
 		BOOST_STATIC_ASSERT(D==1);
@@ -98,6 +100,7 @@ public:
     typedef vertex_descriptor&         				reference;
 	
 	
+	adjacency_iterator_t() {}
 	adjacency_iterator_t(const graph_t *g, vertex_descriptor c, int p)
 	: graph(g), current(c), pos(p) { }
 	
@@ -123,5 +126,18 @@ private:
 	vertex_descriptor current;
 	int pos;
 };
+
+namespace boost {
+    template<unsigned D>
+    struct graph_traits< PeriodicCartesian<D> > {
+        typedef typename PeriodicCartesian<D>::vertex_descriptor      vertex_descriptor;
+        typedef typename PeriodicCartesian<D>::edge_descriptor        edge_descriptor;
+        typedef typename PeriodicCartesian<D>::adjacency_iterator     adjacency_iterator;
+
+        typedef typename PeriodicCartesian<D>::directed_category      directed_category;
+        typedef typename PeriodicCartesian<D>::edge_parallel_category edge_parallel_category;
+        typedef typename PeriodicCartesian<D>::traversal_category     traversal_category;
+    };
+}
 
 #endif
