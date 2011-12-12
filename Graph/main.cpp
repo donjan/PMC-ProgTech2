@@ -7,12 +7,12 @@ int main(int argc, char *argv[])
   
 	if(argc>10) std::cout <<argv[1][0];
 
-	typedef PeriodicCartesian<3> Graph_t;
+	typedef PeriodicCartesian<2> Graph_t;
 
-	Graph_t graph(3,6,9);
+	Graph_t graph(10,10);
 	boost::AdjacencyGraphConcept< Graph_t > concept;
 	
-	typename Graph_t::vertex_descriptor i(1,2,3);
+	typename Graph_t::vertex_descriptor i(0,3);
 	std::cout << i << std::endl;
 	
 	std::pair<typename Graph_t::adjacency_iterator, typename Graph_t::adjacency_iterator > range

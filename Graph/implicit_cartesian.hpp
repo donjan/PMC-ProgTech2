@@ -37,7 +37,7 @@ template <unsigned D>
 std::ostream& operator<<(std::ostream &out, const vertex<D> &v)
 {
 	out << '(' << v[0];
-	for(int i = 1;i<D;++i)
+	for(unsigned i = 1;i<D;++i)
 		out << ',' << v[i];
 	out << ')';
 	
@@ -96,7 +96,9 @@ public:
 
 	friend std::pair<adjacency_iterator, adjacency_iterator > adjacent_vertices(const vertex_descriptor &v, const PeriodicCartesian<D> &g)
 	{
-		return std::make_pair(adjacency_iterator(&g, v, 0), adjacency_iterator(&g, v, 0));
+		int i = 3;
+		for(int j = 1;j<D;++j) i*=3;
+		return std::make_pair(adjacency_iterator(&g, v, 0), adjacency_iterator(&g, v, i));
 	}
 
 private:
@@ -137,7 +139,7 @@ public:
 	vertex_descriptor operator*()
 	{
 		vertex_descriptor result;
-		for(int i = 0;i<D;++i)
+		for(unsigned i = 0;i<D;++i)
 			result[i] = (current[i]+offsets[pos][i]+graph->getDim(i))%graph->getDim(i);
 		return result; 
 	}
