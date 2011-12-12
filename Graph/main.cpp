@@ -1,5 +1,6 @@
 #include <iostream>
 #include "implicit_cartesian.hpp"
+#include "cartesian_properties.hpp"
 #include <boost/graph/graph_concepts.hpp>
 
 int main(int argc, char *argv[])
@@ -10,6 +11,8 @@ int main(int argc, char *argv[])
 	typedef PeriodicCartesian<2> Graph_t;
 
 	Graph_t graph(10,10);
+	CartesianProperties<int, 2> mag(graph);
+	
 	boost::AdjacencyGraphConcept< Graph_t > concept;
 	
 	typename Graph_t::vertex_descriptor i(0,3);
@@ -20,7 +23,8 @@ int main(int argc, char *argv[])
 	
 	for(;range.first!=range.second;++range.first)
 	{
-		std::cout << *range.first << ' ';
+		std::cout << *range.first << ' ' << mag(*range.first) << ' ';
+		
 	}
 		
 	
